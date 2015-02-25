@@ -6,7 +6,7 @@
 		<artifactId>WAaaS</artifactId>
 		<groupId>waaas</groupId>
 		<version>${project.version}</version>
-		<relativePath>../../WAaaS/pom.xml</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<groupId>waaas.auto</groupId>
 	<artifactId>WAaaS-AUTO</artifactId>
