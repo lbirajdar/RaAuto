@@ -1,4 +1,4 @@
-## How to use WAaaS ##
+## How to use RaAuto ##
 
  - **Pre-requisites**:
 	 - JDK 1.6 or higher
