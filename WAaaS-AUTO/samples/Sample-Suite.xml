@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:wAaasMetaData xmlns:ns2="com.waas.jaxb">
+
+	<suite>
+
+		<info>
+			<name>Browsing Git Hub</name>
+			<description>Sample Browsing Git Hub</description>
+			<createdBy>By user</createdBy>
+			<editedOn>At this time </editedOn>
+		</info>
+
+		<meta>
+			<baseurl>https://github.com/</baseurl>
+		</meta>
+
+
+
+		<testcases>
+
+			<testcase id="1" description="Explore and try creating user account with incomplete data" isCorrective="false">
+				<!-- Name of the test case -->
+				<name>Explore and try creating user account with incomplete data</name>
+				<dependsOn>
+					<!-- If this test case depends on any of the tests in the SAME Suite -->
+				</dependsOn>
+				<executionSteps>
+					<!-- The name attribute of the Event will tell the framework, what operation 
+						to perform when it is part of executeSteps, when it is part of verificationSteps, 
+						action attribute of Context will be required to direct what to perform -->
+
+					<event id="1" name="navigate" description="Navigate to the home page of github" optional="false">
+						<context id="1" type="url" value="">https://github.com/</context>
+					</event>
+
+					<event id="1" name="click" description="Click on the Explore link" optional="false">
+						<context id="1" type="xpath" value="//a[contains(text(),'Explore')]">Explore</context>
+					</event>
+
+					<event id="1" name="click" description="Click on the Sign up for free button" optional="false">
+						<context id="1" type="xpath"
+							value="//a[contains(text(), 'Sign up for free')]">Sign up for free</context>
+					</event>
+
+					<event id="1" name="setText" description="Set some value in Username field" optional="false">
+						<context id="1" type="id" value="user_login">SampleUser</context>
+					</event>
+
+					<event id="1" name="Click" description="Click Signup button without entering any values in other required fields" optional="false">
+						<context id="1" type="id" value="signup_button"></context>
+					</event>
+
+				</executionSteps>
+
+				<verificationSteps>
+
+					<contexts>
+						<!-- What action to perform, and what to verify -->
+						<context action="getText" type="xpath" value="//*[@class='flash flash-error']">There were problems creating your account</context>
+					</contexts>
+
+					<correctiveSteps>
+						<!-- Assumption is that there will be one corrective step for a given 
+							applicableWhen condition -->
+						<!-- The name attribute here is necessarily a testcase name which will 
+							then be executed, if condition is true -->
+						<correctiveStep id="" name="Try with another set of incomplete data">
+							
+							<!-- applicable when the below condition is TRUE -->
+							<applicableWhen>
+								<context action="getText" type="xpath" value="//*[@class='flash flash-error']">There were problems creating your account</context>
+							</applicableWhen>
+						</correctiveStep>
+					</correctiveSteps>
+
+				</verificationSteps>
+
+				<testDataFile>E:/template/template-data.properties</testDataFile>
+
+			</testcase>
+			
+			
+			<!-- Note the value of isCorrective attribute and name element -->
+			<testcase id="1" description="Try with another set of incomplete data" isCorrective="true">
+				<!-- Name of the test case -->
+				<name>Try with another set of incomplete data</name>
+				<dependsOn>
+					<!-- If this test case depends on any of the tests in the SAME Suite -->
+				</dependsOn>
+				<executionSteps>
+					<!-- The name attribute of the Event will tell the framework, what operation 
+						to perform when it is part of executeSteps, when it is part of verificationSteps, 
+						action attribute of Context will be required to direct what to perform -->
+
+
+					<event id="1" name="setText" description="Set some value in Username field" optional="false">
+						<context id="1" type="id" value="user_login">SampleUser123</context>
+					</event>
+					
+					<event id="1" name="setText" description="Set some value in Email Address field" optional="false">
+						<context id="1" type="id" value="user_email">SampleUser123_Email</context>
+					</event>
+
+					<event id="1" name="Click" description="Click Signup button without entering any values in other required fields" optional="false">
+						<context id="1" type="id" value="signup_button">SampleUser</context>
+					</event>
+
+				</executionSteps>
+
+				<verificationSteps>
+
+					<contexts>
+						<!-- What action to perform, and what to verify -->
+						<context action="getText" type="xpath" value="//*[@class='error']  [contains(., 'Email')]">${email.not.valid.error}</context>
+					</contexts>					
+
+				</verificationSteps>
+
+				<!-- As of now, it's mandatory to have a valid properties file for every 
+					testcase -->
+				<testDataFile>E:/template/template-data.properties</testDataFile>
+
+			</testcase>
+
+		</testcases>
+
+	</suite>
+
+</ns2:wAaasMetaData>
+	
+	
