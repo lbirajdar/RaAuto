@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 
-@XmlRootElement (name="correctivestep")
+@XmlRootElement (name="correctiveStep")
 public class CorrectiveStep implements Serializable{
 
 	/**
@@ -40,7 +40,7 @@ public class CorrectiveStep implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	@XmlElement(name="applicableWhen")
+	@XmlElement(name="applicableWhen", required=true)
 	public ApplicableWhen getApplicableWhen() {
 		return applicableWhen;
 	}

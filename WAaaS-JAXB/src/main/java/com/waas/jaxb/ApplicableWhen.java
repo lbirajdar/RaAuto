@@ -4,12 +4,12 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
-@XmlRootElement (name="applicablewhen")
+@XmlRootElement (name="applicableWhen")
 public class ApplicableWhen {
 	
 	private Context context;
 
-	@XmlElement (name="context")
+	@XmlElement (name="context", required=true)
 	public Context getContext() {
 		return context;
 	}
