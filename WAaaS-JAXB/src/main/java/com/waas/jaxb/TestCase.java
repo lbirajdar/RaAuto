@@ -115,7 +115,7 @@ public class TestCase {
 	/**
 	 * @return the dependsOn
 	 */
-	@XmlElement(name="dependson", defaultValue="")
+	@XmlElement(name="dependsOn", defaultValue="")
 	public String getDependsOn() {
 		return dependsOn;		
 	}
