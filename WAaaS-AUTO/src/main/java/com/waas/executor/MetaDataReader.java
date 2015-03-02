@@ -178,12 +178,14 @@ public class MetaDataReader {
 
             String currentStepName = lastStep.getName();
             String dependsOn = lastStep.getDependsOn();
-            while (dependsOn != null && !dependsOn.equals("")) {
+            while (dependsOn != null && !dependsOn.trim().equals("")) {
 
                 logger.info("Testcase :" + currentStepName + "- Depends on - "
                         + dependsOn);
 
                 lastStep = getTestWithName(suiteTests, dependsOn);
+                
+                
                 if (lastStep == null || lastStep.equals("")) {
 
                     System.out
