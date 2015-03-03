@@ -1,4 +1,4 @@
-## How to use RaAuto ##
+## How to use RaAuto - The Rapid Automation Framework ##
 
  - **Pre-requisites**:
 	 - JDK 1.6 or higher
@@ -17,13 +17,13 @@
 	 
  - **Running the automated workflow**
 	 Update the suites.properties file and set the values for the followings at the minimum
-	 - waas.suites.folder = Location of your suite files in following format
-   ìd:/Trial/suites/î or d:\\Trial\\suites\\î  
-	 - waas.suites=mysuite1.xml,mysuite2.xml (A comma separated list of your suite files)	
-	 - waas.path.to.browser.driver.exe = Location of browser driver exe
+	 - raauto.suites.folder = Location of your suite files in following format
+   ‚Äúd:/Trial/suites/‚Äù or d:\\Trial\\suites\\‚Äù  
+	 - raauto.suites=mysuite1.xml,mysuite2.xml (A comma separated list of your suite files)	
+	 - raauto.path.to.browser.driver.exe = Location of browser driver exe
    e.g. C:/Program Files/Internet Explorer/IEDriverServer.exe Must be
    specified for browsers other than Firefox   
-	 -  Go to the build(target) folder and run java -jar WAaaS-AUTO-1.0.jar "{path-to-suites.properties}"
+	 -  Go to the build(target) folder and run java -jar RaAuto-AUTO-1.0.jar "{path-to-suites.properties}"
 
  - **Reference**
 	Use help.txt for more details on supported actions
