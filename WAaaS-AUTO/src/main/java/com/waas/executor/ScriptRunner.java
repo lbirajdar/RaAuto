@@ -3,9 +3,9 @@ package com.waas.executor;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITest;
-import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+import com.waas.core.exceptions.TestNotFoundException;
 
 /**
  * This class has the @Test method, which eventually lets MetaDataReader to
@@ -47,11 +47,16 @@ public class ScriptRunner implements ITest {
      *            the logger
      */
     public ScriptRunner(MetaDataReader mReader, String testName,
-            WebDriver driver, Logger logger) {
+            WebDriver driver, Logger logger)  throws TestNotFoundException {
 
         this.mReader = mReader;
 
         customTestName = testName;
+        
+        if(customTestName == null || customTestName.trim().equals("")){
+            
+            throw new TestNotFoundException(customTestName);
+        }
 
         _driver = driver;
 

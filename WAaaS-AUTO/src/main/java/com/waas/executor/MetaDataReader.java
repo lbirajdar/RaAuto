@@ -21,6 +21,7 @@ import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import org.testng.Reporter;
 
+import com.waas.core.exceptions.TestNotFoundException;
 import com.waas.core.exceptions.WAaaSElementNotFound;
 import com.waas.jaxb.Context;
 import com.waas.jaxb.CorrectiveStep;
@@ -159,7 +160,7 @@ public class MetaDataReader {
      * @return the all dependent tests
      */
     private List<TestCase> getAllDependentTests(String testName)
-            throws Exception {
+            throws TestNotFoundException {
 
         List<TestCase> allDependentTests = new ArrayList<TestCase>();
         TestCase lastStep = getTestWithName(suiteTests, testName);
@@ -184,8 +185,7 @@ public class MetaDataReader {
                         + dependsOn);
 
                 lastStep = getTestWithName(suiteTests, dependsOn);
-                
-                
+
                 if (lastStep == null || lastStep.equals("")) {
 
                     System.out
@@ -193,10 +193,7 @@ public class MetaDataReader {
                                     + lastStep);
                     logger.error("Incorrect testcase name for DependsOn :"
                             + lastStep);
-                    throw new Exception(
-                            "Incorrect DependsOn test :"
-                                    + dependsOn
-                                    + "\n Please correct the test name/dependsOn.");
+                    throw new TestNotFoundException("dependsOn Test : " + dependsOn);
 
                 }
                 dependsOn = lastStep.getDependsOn();
@@ -223,26 +220,36 @@ public class MetaDataReader {
      * @param stepName
      *            the step name
      * @return the test with name
+     * @throws TestNotFoundExecption
      */
-    private TestCase getTestWithName(List<TestCase> allTests, String stepName) {
+    private TestCase getTestWithName(List<TestCase> allTests, String stepName)
+            throws TestNotFoundException {
 
         Iterator<TestCase> i = allTests.iterator();
-        TestCase step, findStep = null;
+        TestCase step = null, foundTest = null;
+        boolean didFindTest = false;
 
         while (i.hasNext()) {
 
             step = (TestCase) i.next();
 
             if (step.getName().equals(stepName)) {
-                findStep = step;
+                foundTest = step;
                 logger.info("Found Testcase with name : " + stepName);
+                didFindTest = true;
 
                 break;
             }
 
         }
 
-        return findStep;
+        if (step.getName() != null && !didFindTest) {
+
+            throw new TestNotFoundException(step.getName());
+
+        }
+
+        return foundTest;
     }
 
     /**
@@ -257,7 +264,8 @@ public class MetaDataReader {
      * @throws Exception
      *             the exception
      */
-    public void executeTest(String testName, WebDriver driver) throws Exception {
+    public void executeTest(String testName, WebDriver driver)
+            throws Exception {
 
         List<TestCase> orderderdTests = getAllDependentTests(testName);
         TestCase test;
@@ -670,7 +678,7 @@ public class MetaDataReader {
                         if (actualText.contains(expectedText)) {
                             if (stepToPerform != null
                                     && !stepToPerform.equals("")) {
-                                // assumption is that there is only one
+
                                 logger.info("Performing correctiveStep : "
                                         + stepToPerform);
                                 executeTest(stepToPerform, driver);
