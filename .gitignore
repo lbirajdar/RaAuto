@@ -11,3 +11,7 @@
 
 
 
+*.prefs
+*.project
+RaAuto/RaAuto-AUTO/.classpath
+*.classpath
