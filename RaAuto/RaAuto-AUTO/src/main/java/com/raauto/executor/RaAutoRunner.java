@@ -151,9 +151,10 @@ public class RaAutoRunner {
      *            location where the suite.xml files are residing
      *            raauto.suites=comma separated list of suites to be executed
      *            (essentially they are xml files listing the test cases)
-     *            raauto.remote.hub.url= the path of remote hub raauto.browser= e.g.
-     *            firefox, internetexplorer, chrome raauto.path.to.browser.exe=
-     *            the path to exe files of IE and Chrome
+     *            raauto.remote.hub.url= the path of remote hub raauto.browser=
+     *            e.g. firefox, internetexplorer, chrome
+     *            raauto.path.to.browser.exe= the path to exe files of IE and
+     *            Chrome
      * 
      *            <li>
      * @throws Exception
@@ -180,9 +181,10 @@ public class RaAutoRunner {
      *            location where the suite.xml files are residing
      *            raauto.suites=comma separated list of suites to be executed
      *            (essentially they are xml files listing the test cases)
-     *            raauto.remote.hub.url= the path of remote hub raauto.browser= e.g.
-     *            firefox, internetexplorer, chrome raauto.path.to.browser.exe=
-     *            the path to exe files of IE and Chrome
+     *            raauto.remote.hub.url= the path of remote hub raauto.browser=
+     *            e.g. firefox, internetexplorer, chrome
+     *            raauto.path.to.browser.exe= the path to exe files of IE and
+     *            Chrome
      * @param poolInstance
      *            the pool instance
      * @param sessionId
@@ -336,6 +338,9 @@ public class RaAutoRunner {
         logger.info("********************************************************");
 
         logger.info("Running suite: " + suiteName + " from :" + meta_data_file);
+
+        System.out.println("Running suite: " + suiteName + " from :"
+                + meta_data_file);
 
         logger.info("********************************************************");
 
