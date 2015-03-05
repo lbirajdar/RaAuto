@@ -295,7 +295,7 @@ public class MetaDataReader {
 
                 verification = test.getVerificationSteps();
 
-                verify(verification, driver));
+                verify(verification, driver);
 
                 performCorrectiveSteps(verification, driver);
 
