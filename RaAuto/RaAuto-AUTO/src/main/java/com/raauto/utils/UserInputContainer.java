@@ -94,7 +94,7 @@ public class UserInputContainer {
 				buffer.append(prefix);
 				// Retrieve value of variable
 				String key = substitutionMatcher.group(2);
-				System.out.println("Key:" + key);
+				//System.out.println("Key:" + key);
 				// String value = getValue(key);
 				String value = userProperties.getProperty(key);
 				buffer.append(value);
@@ -107,9 +107,9 @@ public class UserInputContainer {
 			// Append final segment of the string
 			buffer.append(line.substring(lastLocation));
 
-			System.out.println(buffer.toString());
+			//System.out.println(buffer.toString());
 		} else {
-			System.out.println(line);
+			//System.out.println(line);
 		}
 
 	}

@@ -21,14 +21,14 @@ import org.openqa.selenium.interactions.Actions;
 import org.testng.Assert;
 import org.testng.Reporter;
 
-import com.raauto.core.exceptions.TestNotFoundException;
 import com.raauto.core.exceptions.RaAutoElementNotFound;
+import com.raauto.core.exceptions.TestNotFoundException;
 import com.raauto.jaxb.Context;
 import com.raauto.jaxb.CorrectiveStep;
 import com.raauto.jaxb.ExecutionEvent;
+import com.raauto.jaxb.RaAutoMetaData;
 import com.raauto.jaxb.TestCase;
 import com.raauto.jaxb.VerificationSteps;
-import com.raauto.jaxb.RaAutoMetaData;
 import com.raauto.pageobjects.WebPage;
 import com.raauto.utils.ActionHandler;
 import com.raauto.utils.UserInputContainer;
@@ -80,9 +80,10 @@ public class MetaDataReader {
         try {
 
             jc = JAXBContext.newInstance(RaAutoMetaData.class);
-            RaAutoMetaData raAutoMetaData = (RaAutoMetaData) jc.createUnmarshaller()
-                    .unmarshal(new File(meta_data_file));
-            suiteTests = (List<TestCase>) raAutoMetaData.getSuite().getTestCases();
+            RaAutoMetaData raAutoMetaData = (RaAutoMetaData) jc
+                    .createUnmarshaller().unmarshal(new File(meta_data_file));
+            suiteTests = (List<TestCase>) raAutoMetaData.getSuite()
+                    .getTestCases();
 
             SAXBuilder builder = new SAXBuilder();
             meta_data_document = builder.build(new File(meta_data_file));
@@ -193,7 +194,8 @@ public class MetaDataReader {
                                     + lastStep);
                     logger.error("Incorrect testcase name for DependsOn :"
                             + lastStep);
-                    throw new TestNotFoundException("dependsOn Test : " + dependsOn);
+                    throw new TestNotFoundException("dependsOn Test : "
+                            + dependsOn);
 
                 }
                 dependsOn = lastStep.getDependsOn();
@@ -264,8 +266,7 @@ public class MetaDataReader {
      * @throws Exception
      *             the exception
      */
-    public void executeTest(String testName, WebDriver driver)
-            throws Exception {
+    public void executeTest(String testName, WebDriver driver) throws Exception {
 
         List<TestCase> orderderdTests = getAllDependentTests(testName);
         TestCase test;
@@ -294,9 +295,10 @@ public class MetaDataReader {
 
                 verification = test.getVerificationSteps();
 
-                verify(verification, driver);
+                verify(verification, driver));
 
                 performCorrectiveSteps(verification, driver);
+
             }
         }
         userOutputWriter.close();
@@ -492,18 +494,23 @@ public class MetaDataReader {
      * @param driver
      *            - Webdriver
      * @return boolean - true/false
+     * @throws RaAutoVerificationFailedException
      */
     public boolean verify(VerificationSteps verify, WebDriver driver) {
         boolean finalResult = true, flag = false;
 
         List<Context> contexts = (List<Context>) verify.getContexts();
+        Context context = null;
+        String operation = null, findBy = null, findByVal = null;
+        WebElement currentElement;
+
+        Object actual = null;
+        Object expected = null;
 
         // 1. Handle the context verification part
         if (contexts != null && contexts.size() > 0) {
             Iterator<Context> contextIterator = contexts.iterator();
-            Context context;
-            String operation, findBy, findByVal;
-            WebElement currentElement;
+
             while (contextIterator.hasNext()) {
                 context = contextIterator.next();
                 operation = context.getAction();
@@ -525,13 +532,17 @@ public class MetaDataReader {
                         logger.info("Trying to locate : " + findBy + "-"
                                 + findByVal);
 
-                        if (operation.equalsIgnoreCase("gettext")) {
+                        if (operation.equalsIgnoreCase("getText")) {
                             String actualText = currentElement.getText();
+                            actual = actualText;
+
                             String expectedText = context.getText();
 
                             // replace if the inputdata found to be a key
                             expectedText = input_container.getMaskedData(
                                     expectedText, logger);
+
+                            expected = expectedText;
 
                             logger.info("Checking if expected text is found in actual text :::\nExpected : "
                                     + expectedText + "\nActual : " + actualText);
@@ -540,6 +551,7 @@ public class MetaDataReader {
                                     || actualText
                                             .equalsIgnoreCase(expectedText)) {
                                 logger.info("Text Matches hence verification passed.");
+
                                 flag = true;
 
                             } else {
@@ -554,18 +566,21 @@ public class MetaDataReader {
                                 .equalsIgnoreCase("getOccurencesInTable")) {
 
                             String searchValue = context.getText();
-                            int actualOccurences = 0;
-                            String expectedOccurences = "";
+                            int actualOccurences = -1;
+
                             int[] arr = new int[3];
                             searchValue = context.getText();
-                            expectedOccurences = context.getExpectedCount();
+                            int expectedOccurences = Integer.parseInt(context
+                                    .getExpectedCount());
+                            expected = Integer.valueOf(expectedOccurences);
 
                             try {
                                 arr = ActionHandler.getValueInTable(driver,
                                         searchValue, findBy, findByVal);
                                 actualOccurences = arr[0];
-                                if (actualOccurences == Integer
-                                        .parseInt(expectedOccurences)) {
+                                actual = Integer.valueOf(actualOccurences);
+
+                                if (actualOccurences == expectedOccurences) {
 
                                     flag = true;
 
@@ -618,8 +633,21 @@ public class MetaDataReader {
             logger.info("Nothing to verify");
 
         }
-        Assert.assertTrue(finalResult);
+
+        if (!finalResult) {
+
+            System.out.println("Failed operation : \"" + context.getAction() + "\"");
+            System.out.println("Expected : \"" + expected.toString()
+                    + "\" And Actual was : \"" + actual.toString() + "\"");
+
+            Assert.fail("The test verification failed, actual - \""
+                    + actual.toString() + "\" DOES NOT match the expected - \""
+                    + expected.toString() + "\"");
+
+        }
+
         return finalResult;
+
     }
 
     /**

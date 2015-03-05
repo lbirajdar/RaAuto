@@ -48,22 +48,20 @@ public class ScriptRunner implements ITest {
      *            the logger
      */
     public ScriptRunner(MetaDataReader mReader, String testName,
-            WebDriver driver, Logger logger)  throws TestNotFoundException {
+            WebDriver driver, Logger logger) throws TestNotFoundException {
 
         this.mReader = mReader;
 
         customTestName = testName;
-        
-        if(customTestName == null || customTestName.trim().equals("")){
-            
+
+        if (customTestName == null || customTestName.trim().equals("")) {
+
             throw new TestNotFoundException(customTestName);
         }
 
         _driver = driver;
 
         this.logger = logger;
-
-        System.out.println("Running test : " + testName);
 
     }
 
@@ -81,7 +79,10 @@ public class ScriptRunner implements ITest {
 
         logger.info("Running test: " + getTestName());
 
-        // Reporter.log("Running test: " + getTestName());
+        System.out
+                .println("======================================================");
+
+        System.out.println("Running test : " + getTestName());
 
         if (mReader != null) {
 
@@ -89,23 +90,28 @@ public class ScriptRunner implements ITest {
         }
 
         logger.info("Finishing test : " + getTestName());
+
+        System.out.println("Finishing test : " + getTestName());
+
+        System.out
+                .println("======================================================");
+
         logger.info("======================================================\n");
 
     }
 
     /**
      * @AfterMethod - Reset browser Resets the browser after the runs are over
-     */    
-   
+     */
+
     @AfterMethod
     public void resetBrowser() {
 
-        System.out.println("@AfterMethod");
+        // System.out.println("@AfterMethod");
 
         _driver.get("");
 
     }
-    
 
     public String getTestName() {
 

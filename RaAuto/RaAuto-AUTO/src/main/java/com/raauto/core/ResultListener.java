@@ -16,51 +16,53 @@ import org.testng.ITestResult;
 
 public class ResultListener implements ITestListener {
 
-	/** The run over. */
-	private boolean runOver = false;
+    /** The run over. */
+    private boolean runOver = false;
 
-	public void onFinish(ITestContext arg0) {
+    public void onFinish(ITestContext arg0) {
 
-		runOver = true;
+        runOver = true;
 
-		System.out.println("All tests finished");
+        System.out.println("All tests from suite \""
+                + arg0.getSuite().getName() + "\" finished");
+        System.out.println("********************************************************");
 
-	}
+    }
 
-	public void onStart(ITestContext arg0) {
-		// TODO Auto-generated method stub
+    public void onStart(ITestContext arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
-		// TODO Auto-generated method stub
+    public void onTestFailedButWithinSuccessPercentage(ITestResult arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void onTestFailure(ITestResult arg0) {
-		// TODO Auto-generated method stub
+    public void onTestFailure(ITestResult arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void onTestSkipped(ITestResult arg0) {
-		// TODO Auto-generated method stub
+    public void onTestSkipped(ITestResult arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void onTestStart(ITestResult arg0) {
-		// TODO Auto-generated method stub
+    public void onTestStart(ITestResult arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public void onTestSuccess(ITestResult arg0) {
-		// TODO Auto-generated method stub
+    public void onTestSuccess(ITestResult arg0) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	public boolean getTestRunStatus() {
+    public boolean getTestRunStatus() {
 
-		return runOver;
+        return runOver;
 
-	}
+    }
 
 }
