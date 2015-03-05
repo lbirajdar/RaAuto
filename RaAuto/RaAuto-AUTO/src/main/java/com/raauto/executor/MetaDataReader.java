@@ -295,13 +295,7 @@ public class MetaDataReader {
 
                 verification = test.getVerificationSteps();
 
-                if (!verify(verification, driver)) {
-
-                    logger.info("Finishing test : " + testName);
-
-                    System.out.println("Finishing test : " + testName);
-
-                }
+                verify(verification, driver));
 
                 performCorrectiveSteps(verification, driver);
 
