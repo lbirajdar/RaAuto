@@ -1,10 +1,13 @@
 package com.raauto.executor;
 
+import java.lang.reflect.Field;
 import org.apache.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.testng.ITest;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
+import org.testng.internal.BaseTestMethod;
 
 import com.raauto.core.exceptions.TestNotFoundException;
 
@@ -102,12 +105,30 @@ public class ScriptRunner implements ITest {
 
     /**
      * @AfterMethod - Reset browser Resets the browser after the runs are over
+     *              The method also ensures correct naming for for the test
+     *              cases, which otherwise would have been simply named as
+     *              "Test"
      */
 
     @AfterMethod
-    public void resetBrowser() {
+    public void setTestNameAsMethod(ITestResult theResult) {
 
-        // System.out.println("@AfterMethod");
+        try {
+
+            BaseTestMethod bastTestMethod = (BaseTestMethod) theResult.getMethod();
+
+            Field field = bastTestMethod.getClass().getSuperclass()
+                    .getDeclaredField("m_methodName");
+
+            field.setAccessible(true);
+
+            field.set(bastTestMethod, bastTestMethod.getMethodName() + "." + customTestName);
+
+        } catch (Exception e) {
+
+            System.out.println(e.getMessage());
+
+        }
 
         _driver.get("");
 

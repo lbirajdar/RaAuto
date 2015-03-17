@@ -30,6 +30,7 @@ import org.testng.xml.XmlTest;
 import com.raauto.core.ListenerPool;
 import com.raauto.core.ResultListener;
 import com.raauto.jaxb.TestCase;
+import com.raauto.reporter.RaAutoReporter;
 
 /**
  * This class is the entry point for running any tests using this framework.
@@ -224,6 +225,10 @@ public class RaAutoRunner {
             TestNG tng = new TestNG();
 
             tng.addListener(rListener);
+            
+            /*Add this while generating the customized reports*/
+            //tng.addListener(new RaAutoReporter());
+            
             tng.setDefaultSuiteName("RaAuto-Suite");
 
             poolInstance.setResultFolder(sessionId, resultBasePath);
@@ -231,8 +236,11 @@ public class RaAutoRunner {
             resultFolder = poolInstance.getResultFolder(sessionId);
 
             File directory = new File(resultFolder);
+            
             if (!directory.exists()) {
+                
                 directory.mkdir();
+                
             }
 
             tng.setOutputDirectory(resultFolder);
@@ -269,6 +277,7 @@ public class RaAutoRunner {
 
                 String browserDriverPath = runnerProperties
                         .getProperty(BROWSER_DRIVER_PATH_KEY);
+            
                 suiteMetaDataMap.put(BROWSER_DRIVER_PATH_KEY,
                         browserDriverPath == null ? "" : browserDriverPath);
 
@@ -277,9 +286,11 @@ public class RaAutoRunner {
                 suite.setParameters(suiteMetaDataMap);
 
                 XmlTest test = new XmlTest(suite);
+                
                 test.setName("RaAuto - Rapidly Automated Tests");
 
                 List<XmlClass> classes = new ArrayList<XmlClass>();
+                
                 classes.add(new XmlClass("com.raauto.executor.RaAutoRunner"));
 
                 test.setXmlClasses(classes);
@@ -297,6 +308,7 @@ public class RaAutoRunner {
             if (((ResultListener) rListener).getTestRunStatus() == true) {
 
                 pDriver.close();
+                
                 pDriver.quit();
 
             }
@@ -325,6 +337,7 @@ public class RaAutoRunner {
             throws Exception {
 
         String suiteName = context.getSuite().getName();
+        
         String sessionId = context.getSuite().getParameter(SESSION_ID);
 
         InfraManager.poolInstance.setLogger(sessionId, suiteName);
@@ -412,7 +425,9 @@ public class RaAutoRunner {
     private boolean initializeBrowser(String sessionId) throws Exception {
 
         boolean ready = false;
+        
         String browserExecutableProperty = null;
+        
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         URL server = null;
@@ -421,12 +436,15 @@ public class RaAutoRunner {
                 && !runnerProperties.getProperty(REMOTE_HUB_URL_KEY).equals("")) {
 
             server = new URL(runnerProperties.getProperty(REMOTE_HUB_URL_KEY));
+        
             System.out.println("Running suite on :" + server.toString());
+        
         }
 
         String browserName = runnerProperties.getProperty(BROWSER_KEY);
 
         if (server != null && !server.equals("")) {
+        
             if (browserName != null && !browserName.equals("")) {
 
                 System.out.println("Running suite  in :" + browserName);
@@ -436,9 +454,11 @@ public class RaAutoRunner {
                         || browserName.equalsIgnoreCase("InternetExplorer")) {
 
                     browserExecutableProperty = "webdriver.ie.driver";
+            
                     System.setProperty(browserExecutableProperty,
                             runnerProperties
                                     .getProperty(BROWSER_DRIVER_PATH_KEY));
+                    
                     capabilities = DesiredCapabilities.internetExplorer();
 
                 } else if (browserName.equals("Chrome")
@@ -446,45 +466,63 @@ public class RaAutoRunner {
                         || browserName.equalsIgnoreCase("GoogleChrome")) {
 
                     browserExecutableProperty = "webdriver.chrome.driver";
+                    
                     System.setProperty(browserExecutableProperty,
                             runnerProperties
                                     .getProperty(BROWSER_DRIVER_PATH_KEY));
+                    
                     capabilities = DesiredCapabilities.chrome();
+                    
                 } else {
 
                     capabilities = DesiredCapabilities.firefox();
+                    
                 }
 
                 pDriver = new RemoteWebDriver(server, capabilities);
 
             } else {
+                
                 capabilities = DesiredCapabilities.firefox();
+                
                 pDriver = new RemoteWebDriver(server, capabilities);
+            
             }
 
         } else {
+            
             if (browserName != null && !browserName.equals("")) {
                 if (browserName.equalsIgnoreCase("ie")
                         || browserName.equalsIgnoreCase("Internet Explorer")
                         || browserName.equalsIgnoreCase("InternetExplorer")) {
+            
                     browserExecutableProperty = "webdriver.ie.driver";
+                    
                     System.setProperty(browserExecutableProperty,
                             runnerProperties
                                     .getProperty(BROWSER_DRIVER_PATH_KEY));
+                    
                     pDriver = new InternetExplorerDriver();
                 } else if (browserName.equals("chrome")) {
 
                     browserExecutableProperty = "webdriver.chrome.driver";
+                    
                     System.setProperty(browserExecutableProperty,
                             runnerProperties
                                     .getProperty(BROWSER_DRIVER_PATH_KEY));
+                    
                     capabilities = DesiredCapabilities.chrome();
+                    
                     pDriver = new ChromeDriver();
                 } else {
+                    
                     pDriver = new FirefoxDriver();
+                    
                 }
             } else {
+                
                 pDriver = new FirefoxDriver();
+                
             }
 
         }
@@ -492,6 +530,7 @@ public class RaAutoRunner {
         pDriver.manage().window().maximize();
 
         InfraManager.poolInstance.setDriver(sessionId, pDriver);
+        
         ready = true;
 
         return ready;
