@@ -24,9 +24,9 @@ public class RaAutoElementNotFound extends NoSuchElementException {
 	 */
 	public RaAutoElementNotFound(String by, String locator) {
 
-		super("Ater waiting for defulat time, failed to find element with by="
+		super("After waiting for defulat time, failed to find element with by="
 				+ by + " & locator=" + locator);
-		error = "Ater waiting for defulat time, failed to find element with by="
+		error = "After waiting for defulat time, failed to find element with by="
 				+ by + " & locator=" + locator;
 
 	}
