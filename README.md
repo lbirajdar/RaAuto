@@ -1,6 +1,6 @@
 ## About RaAuto - Rapid Automation ##
 
-**RaAuto is a  rapid test automation framework, which enables end users automate their test cases and workflows without in a scritptless manner**
+**RaAuto is a  rapid test automation framework, which enables end users automate their test cases and workflows in a scritptless manner**
 
 **In its current form, it is based on Selenium and is designed to support workflow and test automation of web applications** 
 
