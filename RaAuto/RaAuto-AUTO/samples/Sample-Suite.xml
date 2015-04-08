@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:RaAutoMetaData xmlns:ns2="com.raauto.jaxb">
+<ns2:raAutoMetaData xmlns:ns2="com.raauto.jaxb">
 
 	<suite>
 
@@ -56,7 +56,7 @@
 
 					<contexts>
 						<!-- What action to perform, and what to verify -->
-						<context action="getText" type="xpath" value="//*[@class='flash flash-error']">There were problems creating your account</context>
+						<context action="getText" type="xpath" value="//*[@class='flash flash-error']" takeElementScreenshot="true">There were problems creating your account</context>
 					</contexts>
 
 					<correctiveSteps>
@@ -111,7 +111,7 @@
 
 					<contexts>
 						<!-- What action to perform, and what to verify -->
-						<context action="getText" type="xpath" value="//*[@class='error']  [contains(., 'Email')]">${email.not.valid.error}</context>
+						<context action="getText" type="xpath" value="//*[@class='error']  [contains(., 'Email')]" takeElementScreenshot="true">${email.not.valid.error}</context>
 					</contexts>					
 
 				</verificationSteps>
@@ -126,6 +126,6 @@
 
 	</suite>
 
-</ns2:RaAutoMetaData>
+</ns2:raAutoMetaData>
 	
 	
