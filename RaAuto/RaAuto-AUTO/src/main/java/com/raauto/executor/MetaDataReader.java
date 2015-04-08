@@ -351,14 +351,11 @@ public class MetaDataReader {
 
         if (action.equalsIgnoreCase("switchToDefault")) {
             driver.switchTo().defaultContent();
-        }
-        if (action.equalsIgnoreCase("navigate")) {
+        } else if (action.equalsIgnoreCase("navigate")) {
             driver.get(inputData);
-        }
-        if (action.equalsIgnoreCase("wait")) {
+        } else if (action.equalsIgnoreCase("wait")) {
             ActionHandler.waitTime(Integer.parseInt(inputData));
-        }
-        if (action.equalsIgnoreCase("SwitchToWindow")) {
+        } else if (action.equalsIgnoreCase("SwitchToWindow")) {
             if (inputData != null) {
                 Set<String> winHandles = driver.getWindowHandles();
                 Iterator<String> i = winHandles.iterator();
@@ -394,7 +391,9 @@ public class MetaDataReader {
             if (action.equalsIgnoreCase("select")) {
                 ActionHandler.select(inputData, currentElement);
             } else if (action.equalsIgnoreCase("setText")) {
-                currentElement.clear();
+                if (!actionContext.getText().equals("Keys.Enter")) {
+                    currentElement.clear();
+                }
                 currentElement.sendKeys(inputData);
             } else if (action.equalsIgnoreCase("clear")) {
                 currentElement.clear();
@@ -479,8 +478,16 @@ public class MetaDataReader {
                         Integer.parseInt(splitInput[0]),
                         Integer.parseInt(splitInput[1])).build().perform();
 
-            } else {
+            } else if (action.equalsIgnoreCase("takeElementScreenshot")) {
+                ActionHandler.takeElementScreenshot(driver,
+                        driver.getWindowHandle(), currentElement);
+            } else if (action.equalsIgnoreCase("click")) {
                 currentElement.click();
+                ActionHandler.waitTime(WebPage.DEFAULT_MEDIUM_WAIT_TIME);
+            } else {
+                System.out.println("Action specified is not, action = "
+                        + action);
+                logger.error("Action specified is not, action = " + action);
             }
         }
     }
@@ -502,7 +509,8 @@ public class MetaDataReader {
         List<Context> contexts = (List<Context>) verify.getContexts();
         Context context = null;
         String operation = null, findBy = null, findByVal = null;
-        WebElement currentElement;
+        WebElement currentElement = null;
+        boolean takeElementScreenShot = false;
 
         Object actual = null;
         Object expected = null;
@@ -516,6 +524,14 @@ public class MetaDataReader {
                 operation = context.getAction();
                 findBy = context.getType();
                 findByVal = context.getValue();
+                System.out.println("Value of takeElementScreenshot="
+                        + context.getTakeElementScreenshot());
+                if (context.getTakeElementScreenshot() != null
+                        && context.getTakeElementScreenshot().equalsIgnoreCase(
+                                "true")) {
+                    takeElementScreenShot = true;
+                    System.out.println("takeElementScreenshot is set to true");
+                }
 
                 if (operation.equalsIgnoreCase("wait")) {
                     ActionHandler.waitTime(Integer.parseInt(context.getText()));
@@ -526,7 +542,7 @@ public class MetaDataReader {
                 if (findByVal != "" && findBy != "") {
                     Reporter.log("Performing verify operation:" + operation);
                     try {
-                        currentElement = null;
+
                         currentElement = ActionHandler.locateElement(driver,
                                 findBy, findByVal);
                         logger.info("Trying to locate : " + findBy + "-"
@@ -626,6 +642,17 @@ public class MetaDataReader {
 
                     }
 
+                    // Take the screenshot, if the takeElementScreenshot = true
+                    if (takeElementScreenShot && currentElement != null) {
+
+                        System.out
+                                .println("Handing over the control to Action Handler for taking Screenshot");
+
+                        ActionHandler.takeElementScreenshot(driver,
+                                driver.getWindowHandle(), currentElement);
+
+                    }
+
                 }
 
             }
@@ -636,7 +663,8 @@ public class MetaDataReader {
 
         if (!finalResult) {
 
-            System.out.println("Failed operation : \"" + context.getAction() + "\"");
+            System.out.println("Failed operation : \"" + context.getAction()
+                    + "\"");
             System.out.println("Expected : \"" + expected.toString()
                     + "\" And Actual was : \"" + actual.toString() + "\"");
 

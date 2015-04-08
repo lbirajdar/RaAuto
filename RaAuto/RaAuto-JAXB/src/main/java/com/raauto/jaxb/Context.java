@@ -15,6 +15,7 @@ public class Context {
 	//private String searchData;
 	private String expectedCount;
 	private String columnNo;
+	private String takeElementScreenshot;
 	
 	/*@XmlAttribute (name="searchdata")
 	public String getSearchData() {
@@ -101,5 +102,18 @@ public class Context {
 	public void setValue(String value) {
 		this.value = value;
 	}
+	
+	/**
+     * @return the takeElementScreenshot = true/false
+     */
+    @XmlAttribute 
+    public String getTakeElementScreenshot() {
+        return takeElementScreenshot;
+    }
+    
+    public void setTakeElementScreenshot(String takeScreenshot) {
+        this.takeElementScreenshot = takeScreenshot;
+    }
+    
 	
 }

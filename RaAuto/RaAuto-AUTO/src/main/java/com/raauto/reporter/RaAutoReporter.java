@@ -9,19 +9,18 @@ import org.testng.ISuiteResult;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
 import org.testng.xml.XmlSuite;
-import org.testng.xml.XmlTest;
 
 /**
- * This class is a placeholder class for generating the customized output on screen.
- * Users can create their methods to generate the customized reports.
+ * This class is a placeholder class for generating the customized output on
+ * screen. Users can write their methods to generate the customized reports.
  * Once created, add it as a listener class to TestNG in RaAutoRunner class.
+ * e.g. tng.addListener(new RaAutoReporter());
  * 
  * @author Laxmikant Birajdar
  */
 
 public class RaAutoReporter implements IReporter {
 
-    @Override
     public void generateReport(List<XmlSuite> arg0, List<ISuite> arg1,
             String arg2) {
 
@@ -43,8 +42,6 @@ public class RaAutoReporter implements IReporter {
 
                     System.out.println("The Method name is : "
                             + methods[counter].getMethodName());
-                    
-                    
 
                 }
 
