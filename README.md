@@ -41,4 +41,4 @@ This framework, enables users rapidly automate the workflow of Web applications.
 	 -  Go to the target (RaAuto-AUTO\target) folder and run `java -jar RaAuto-AUTO-1.0.jar "{path-to-suites.properties}"`
 
  - **Reference**
-	Use <a>Help.MD</a> for more details on supported actions
+	Use [Help.MD](help.md) for more details on supported actions
