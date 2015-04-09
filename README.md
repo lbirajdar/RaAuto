@@ -31,7 +31,7 @@ This framework, enables users rapidly automate the workflow of Web applications.
 	 - template-user-data.properties (RaAuto-AUTO\samples\template-data.properties) guides you to write the user defined inputs. Edit it as per your need. Path to this file needs to be updated in suite xml (that you generated in above step) inside <-testdatafile-> tag
 	 
  - **Running the automated workflow**
-	 Update the `suites.properties` file and set the values for the followings at the minimum
+	 -  Update the `suites.properties` file and set the values for the followings at the minimum
 	 `- raauto.suites.folder` = Location of your suite files in following format
    “d:/Trial/suites/” or d:\\Trial\\suites\\”  
 	 `- raauto.suites` = mysuite1.xml,mysuite2.xml (A comma separated list of your suite files)	
@@ -41,4 +41,4 @@ This framework, enables users rapidly automate the workflow of Web applications.
 	 -  Go to the target (RaAuto-AUTO\target) folder and run `java -jar RaAuto-AUTO-1.0.jar "{path-to-suites.properties}"`
 
  - **Reference**
-	Use [Help.MD](./help.md) for more details on supported actions
+	 -  Use Help.MD for more details on supported actions
