@@ -576,6 +576,7 @@ public class MetaDataReader {
                 currentElement.clear();
                 
                 currentElement.sendKeys(inputData);
+                
             } else if (action.equalsIgnoreCase("check")) {
                
                 if (!currentElement.isSelected()) {
