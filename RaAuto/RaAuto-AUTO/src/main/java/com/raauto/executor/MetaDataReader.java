@@ -73,25 +73,25 @@ public class MetaDataReader {
      *            the logger
      */
     public MetaDataReader(String theXml, Logger logger) {
-        
+
         meta_data_file = theXml;
-        
+
         JAXBContext jc;
-        
+
         this.logger = logger;
 
         try {
 
             jc = JAXBContext.newInstance(RaAutoMetaData.class);
-        
+
             RaAutoMetaData raAutoMetaData = (RaAutoMetaData) jc
                     .createUnmarshaller().unmarshal(new File(meta_data_file));
-            
+
             suiteTests = (List<TestCase>) raAutoMetaData.getSuite()
                     .getTestCases();
 
             SAXBuilder builder = new SAXBuilder();
-            
+
             meta_data_document = builder.build(new File(meta_data_file));
 
             userOutputWriter = new UserOutput(meta_data_file);
@@ -99,19 +99,19 @@ public class MetaDataReader {
         } catch (JAXBException e) {
 
             logger.error("Unable to read xml \n" + e.getLocalizedMessage());
-            
+
             e.printStackTrace();
 
         } catch (IOException e) {
 
             logger.error("Unable to locate xml \n" + e.getLocalizedMessage());
-            
+
             e.printStackTrace();
 
         } catch (JDOMException e) {
 
             logger.error("Unable to locate xml \n" + e.getLocalizedMessage());
-            
+
             e.printStackTrace();
 
         }
@@ -122,30 +122,30 @@ public class MetaDataReader {
     public Collection<TestCase> getTests() {
 
         return suiteTests;
-        
+
     }
 
     // Return the tests where isCorrective=false - we consider them as tests
     public Collection<TestCase> getTestsToRun() {
 
         List<TestCase> testsToRun = new ArrayList<TestCase>();
-        
+
         Iterator<TestCase> i = suiteTests.iterator();
-        
+
         while (i.hasNext()) {
-        
+
             TestCase t = i.next();
-            
+
             boolean isCorrective = t.getIsCorrective();
-            
+
             if (!isCorrective)
-            
+
                 testsToRun.add(t);
-            
+
         }
 
         return (Collection<TestCase>) testsToRun;
-        
+
     }
 
     // To prepare the user input by reading the xml file
@@ -158,12 +158,12 @@ public class MetaDataReader {
 
             input_container = new UserInputContainer(meta_data_document,
                     test_data_file);
-        
+
         } catch (IOException e) {
 
             logger.error("Error reading the test data file" + test_data_file
                     + "\n " + e.getLocalizedMessage());
-        
+
             e.printStackTrace();
 
         }
@@ -184,34 +184,34 @@ public class MetaDataReader {
             throws TestNotFoundException {
 
         List<TestCase> allDependentTests = new ArrayList<TestCase>();
-        
+
         TestCase lastStep = getTestWithName(suiteTests, testName);
-        
+
         allDependentTests.add(0, lastStep);
-        
+
         String stepInputDataFile = lastStep.getTestDataFile();
-        
+
         if (stepInputDataFile != null && !stepInputDataFile.equals("")) {
-        
+
             test_data_file = stepInputDataFile;
-            
+
             prepareUserInput();
-        
+
         }
 
         Iterator<TestCase> i = suiteTests.iterator();
-        
+
         int counter = 1;
-        
+
         while (i.hasNext()) {
-        
+
             // This step is just moving the iterator to next step
             i.next();
 
             String currentStepName = lastStep.getName();
-            
+
             String dependsOn = lastStep.getDependsOn();
-            
+
             while (dependsOn != null && !dependsOn.trim().equals("")) {
 
                 logger.info("Testcase :" + currentStepName + "- Depends on - "
@@ -226,22 +226,22 @@ public class MetaDataReader {
                                     + lastStep);
                     logger.error("Incorrect testcase name for DependsOn :"
                             + lastStep);
-               
+
                     throw new TestNotFoundException("dependsOn Test : "
                             + dependsOn);
 
                 }
-                
+
                 dependsOn = lastStep.getDependsOn();
 
                 allDependentTests.add(counter, lastStep);
 
                 counter++;
-                
+
             }
 
         }
-        
+
         logger.info("Total size of the array with dependencies = "
                 + allDependentTests.size());
 
@@ -249,7 +249,6 @@ public class MetaDataReader {
 
     }
 
-    
     /**
      * Gets the test with name.
      *
@@ -264,9 +263,9 @@ public class MetaDataReader {
             throws TestNotFoundException {
 
         Iterator<TestCase> i = allTests.iterator();
-    
+
         TestCase step = null, foundTest = null;
-        
+
         boolean didFindTest = false;
 
         while (i.hasNext()) {
@@ -274,11 +273,11 @@ public class MetaDataReader {
             step = (TestCase) i.next();
 
             if (step.getName().equals(stepName)) {
-        
+
                 foundTest = step;
-                
+
                 logger.info("Found Testcase with name : " + stepName);
-                
+
                 didFindTest = true;
 
                 break;
@@ -310,9 +309,9 @@ public class MetaDataReader {
     public void executeTest(String testName, WebDriver driver) throws Exception {
 
         List<TestCase> orderderdTests = getAllDependentTests(testName);
-        
+
         TestCase test;
-        
+
         VerificationSteps verification;
 
         if (orderderdTests != null && orderderdTests.size() > 0) {
@@ -344,9 +343,9 @@ public class MetaDataReader {
 
             }
         }
-        
+
         userOutputWriter.close();
-    
+
     }
 
     /**
@@ -384,13 +383,13 @@ public class MetaDataReader {
             throws Exception {
 
         String action = event.getName();
-    
+
         Context actionContext = event.getContext();
 
         Reporter.log("Execution step:" + action + ":" + event.getDesc());
-        
+
         logger.info("Execution step:" + action + ":" + event.getDesc());
-        
+
         String inputData = actionContext.getText();
 
         inputData = input_container.getMaskedData(inputData, logger);
@@ -398,57 +397,57 @@ public class MetaDataReader {
         WebElement currentElement = null;
 
         if (action.equalsIgnoreCase("switchToDefault")) {
-        
+
             driver.switchTo().defaultContent();
-        
+
         } else if (action.equalsIgnoreCase("navigate")) {
-        
+
             driver.get(inputData);
-        
+
         } else if (action.equalsIgnoreCase("wait")) {
-        
+
             ActionHandler.waitTime(Integer.parseInt(inputData));
-        
+
         } else if (action.equalsIgnoreCase("SwitchToWindow")) {
-        
+
             if (inputData != null) {
-            
+
                 Set<String> winHandles = driver.getWindowHandles();
-                
+
                 Iterator<String> i = winHandles.iterator();
-                
+
                 if (inputData.equalsIgnoreCase("ChildWindow")) {
-                
+
                     while (i.hasNext()) {
-                    
+
                         String h = i.next().toString();
-                        
+
                         System.out.println("** " + h);
-                        
+
                         driver.switchTo().window(h);
-                    
+
                     }
-                    
+
                 } else if (inputData.equalsIgnoreCase("ParentWindow")) {
-                    
+
                     String parent = i.next().toString();
-                    
+
                     System.out.println("Parent window handle " + parent);
-                    
+
                     driver.switchTo().window(parent);
-                    
+
                 } else {
-                    
+
                     driver.switchTo().window(inputData);
-                    
+
                 }
-                
+
                 Thread.sleep(WebPage.DEFAULT_MEDIUM_WAIT_TIME);
-                
+
             } else {
-                
+
                 logger.info("Blank Window name.");
-                
+
             }
         }
 
@@ -461,184 +460,193 @@ public class MetaDataReader {
             logger.info("Current Element : " + actionContext.getType() + ":"
                     + actionContext.getValue());
 
-            // possible operations - as taged in meta-data file
+            // Take Element Screenshot, if asked to do so
+            if (actionContext.getTakeElementScreenshot() != null
+                    && actionContext.getTakeElementScreenshot()
+                            .equalsIgnoreCase("true")) {
+
+                ActionHandler.takeElementScreenshot(driver,
+                        driver.getWindowHandle(), currentElement);
+
+            }
+
+            /** Possible operations on the element start here */
             if (action.equalsIgnoreCase("select")) {
-               
+
                 ActionHandler.select(inputData, currentElement);
-            
+
             } else if (action.equalsIgnoreCase("setText")) {
-            
+
                 if (!actionContext.getText().equals("Keys.Enter")) {
-                
+
                     currentElement.clear();
-                
+
                 }
-                
+
                 currentElement.sendKeys(inputData);
-                
+
             } else if (action.equalsIgnoreCase("clear")) {
-                
+
                 currentElement.clear();
-                
+
             } else if (action.equalsIgnoreCase("getText")) {
-                
+
                 userOutputWriter.write(currentElement.getText());
-                
+
                 userOutputWriter
                         .write("*************************************************************");
-                
+
             } else if (action.equalsIgnoreCase("getTable")) {
-                
+
                 // printTable(driver);
                 userOutputWriter
                         .write("*************************************************************");
-                
+
             } else if (inputData.equalsIgnoreCase("submit")) {
-                
+
                 currentElement.submit();
-                
+
             } else if (action.equalsIgnoreCase("doubleClick")) {
-                
+
                 Actions builder = new Actions(driver);
-                
+
                 builder.doubleClick(currentElement).build().perform();
-                
+
             } else if (action.equalsIgnoreCase("rightClick")) {
-                
+
                 Actions builder = new Actions(driver);
-                
+
                 builder.contextClick(currentElement).build().perform();
-                
+
             } else if (action.equalsIgnoreCase("switchToFrame")) {
-                
+
                 driver.switchTo().frame(currentElement);
-                
+
             } else if (action.equalsIgnoreCase("browseFile")) {
-                
+
                 currentElement.sendKeys(inputData);
-                
+
             } else if (action.equalsIgnoreCase("searchValueInTable")) {
-                
+
                 int[] tempArr = new int[3];
-                
+
                 tempArr = ActionHandler.getValueInTable(driver, inputData,
                         actionContext.getType(), actionContext.getValue());
-                
-                if (tempArr[0] >= 1){
-                
+
+                if (tempArr[0] >= 1) {
+
                     logger.info("Found " + tempArr[0]
                             + " Occurrences of the value in table.");
-                }else{
-                 
+                } else {
+
                     logger.info("Value Not Found in table.");
                 }
             } else if (action.equalsIgnoreCase("searchInTableAndClick")) {
-                
+
                 int[] tempArr = new int[3];
-                
+
                 tempArr = ActionHandler.getValueInTable(driver, inputData,
                         actionContext.getType(), actionContext.getValue());
-                
+
                 if (tempArr[0] >= 1) {
-                
+
                     logger.info("Found " + tempArr[0]
                             + " Occurrences of the value in table.");
-                    
+
                     String valueLocator = "", columnNo = actionContext
                             .getColumnNo();
-                    
+
                     if (columnNo != "") {
-                    
+
                         valueLocator = actionContext.getValue() + "["
                                 + tempArr[1] + "]/td[" + columnNo + "]";
-                        
+
                     } else {
-                        
+
                         valueLocator = actionContext.getValue() + "["
                                 + tempArr[1] + "]/td[" + tempArr[2] + "]";
-                        
+
                     }
-                    
+
                     logger.info("New Locator : " + valueLocator);
-                    
+
                     WebElement tempElement = ActionHandler.locateElement(
                             driver, actionContext.getType(), valueLocator);
-                    
+
                     tempElement.click();
-                    
-                } else{
-                    
+
+                } else {
+
                     logger.info("Value Not Found in table.");
-                    
+
                 }
             } else if (action.equalsIgnoreCase("pickDate")) {
-                
+
                 currentElement.clear();
-                
+
                 currentElement.sendKeys(inputData);
-                
+
             } else if (action.equalsIgnoreCase("check")) {
-               
+
                 if (!currentElement.isSelected()) {
-                
+
                     currentElement.click();
-                    
+
                     logger.info("***** Check box checked ");
-                
+
                 }
             } else if (action.equalsIgnoreCase("uncheck")) {
-                
+
                 if (currentElement.isSelected()) {
-                
+
                     currentElement.click();
-                    
+
                     logger.info("***** Check box unchecked ");
-                
+
                 }
             } else if (action.equalsIgnoreCase("dragFrom")) {
-                
+
                 ActionHandler.sourceElement = currentElement;
+
             } else if (action.equalsIgnoreCase("dropTo")) {
-                
+
                 logger.info("Performing drag and drop.");
-                
+
                 logger.info("Source element" + ActionHandler.sourceElement);
-                
+
                 logger.info("Target element" + currentElement);
-                
+
                 Actions builder = new Actions(driver);
-                
+
                 builder.dragAndDrop(ActionHandler.sourceElement, currentElement)
                         .build().perform();
 
             } else if (action.equalsIgnoreCase("dropToOffset")) {
-                
+
                 String[] splitInput = inputData.split(",");
-                
+
                 Actions builder = new Actions(driver);
-                
+
                 builder.dragAndDropBy(currentElement,
                         Integer.parseInt(splitInput[0]),
                         Integer.parseInt(splitInput[1])).build().perform();
-                
-            } else if (action.equalsIgnoreCase("takeElementScreenshot")) {
-                
-                ActionHandler.takeElementScreenshot(driver,
-                        driver.getWindowHandle(), currentElement);
-                
+
             } else if (action.equalsIgnoreCase("click")) {
-                
+
                 currentElement.click();
-                
+
             } else {
-                
-                System.out.println("Action specified is not, action = "
+
+                System.out
+                        .println("Action specified is not a supported action = "
+                                + action);
+
+                logger.error("Action specified is not a supported action = "
                         + action);
-                
-                logger.error("Action specified is not, action = " + action);
-                
+
             }
         }
+
     }
 
     /**
@@ -656,72 +664,72 @@ public class MetaDataReader {
         boolean finalResult = true, flag = false;
 
         List<Context> contexts = (List<Context>) verify.getContexts();
-        
+
         Context context = null;
-        
+
         String operation = null, findBy = null, findByVal = null;
-        
+
         WebElement currentElement = null;
-        
+
         boolean takeElementScreenShot = false;
 
         Object actual = null;
-        
+
         Object expected = null;
 
         // 1. Handle the context verification part
         if (contexts != null && contexts.size() > 0) {
-        
+
             Iterator<Context> contextIterator = contexts.iterator();
 
             while (contextIterator.hasNext()) {
-            
+
                 context = contextIterator.next();
-                
+
                 operation = context.getAction();
-                
+
                 findBy = context.getType();
-                
+
                 findByVal = context.getValue();
-                
+
                 System.out.println("Value of takeElementScreenshot="
                         + context.getTakeElementScreenshot());
-                
+
                 if (context.getTakeElementScreenshot() != null
                         && context.getTakeElementScreenshot().equalsIgnoreCase(
                                 "true")) {
-                
+
                     takeElementScreenShot = true;
-                    
+
                     System.out.println("takeElementScreenshot is set to true");
-                
+
                 }
 
                 if (operation.equalsIgnoreCase("wait")) {
-                
+
                     ActionHandler.waitTime(Integer.parseInt(context.getText()));
-                    
+
                     System.out.println("Wait for "
                             + Integer.parseInt(context.getText()) + "seconds");
-                
+
                 }
 
                 if (findByVal != "" && findBy != "") {
-                
+
                     Reporter.log("Performing verify operation:" + operation);
-                    
+
                     try {
 
                         currentElement = ActionHandler.locateElement(driver,
                                 findBy, findByVal);
-                    
+
                         logger.info("Trying to locate : " + findBy + "-"
                                 + findByVal);
 
                         if (operation.equalsIgnoreCase("getText")) {
-                        
+
                             String actualText = currentElement.getText();
-                            
+
                             actual = actualText;
 
                             String expectedText = context.getText();
@@ -738,7 +746,7 @@ public class MetaDataReader {
                             if (actualText.contains(expectedText)
                                     || actualText
                                             .equalsIgnoreCase(expectedText)) {
-                            
+
                                 logger.info("Text Matches hence verification passed.");
 
                                 flag = true;
@@ -749,32 +757,32 @@ public class MetaDataReader {
                             }
 
                             finalResult = finalResult && flag;
-                            
+
                         }
 
                         else if (operation
                                 .equalsIgnoreCase("getOccurencesInTable")) {
 
                             String searchValue = context.getText();
-                            
+
                             int actualOccurences = -1;
 
                             int[] arr = new int[3];
-                            
+
                             searchValue = context.getText();
-                            
+
                             int expectedOccurences = Integer.parseInt(context
                                     .getExpectedCount());
-                            
+
                             expected = Integer.valueOf(expectedOccurences);
 
                             try {
-                            
+
                                 arr = ActionHandler.getValueInTable(driver,
                                         searchValue, findBy, findByVal);
-                                
+
                                 actualOccurences = arr[0];
-                                
+
                                 actual = Integer.valueOf(actualOccurences);
 
                                 if (actualOccurences == expectedOccurences) {
@@ -782,23 +790,23 @@ public class MetaDataReader {
                                     flag = true;
 
                                 } else {
-                                
+
                                     logger.info("Expected and actual occurances count doesn't match: Expected= "
                                             + expectedOccurences
                                             + " And Actual is="
                                             + actualOccurences);
-                                    
+
                                 }
 
                                 finalResult = finalResult && flag;
 
                             } catch (IOException e) {
-                                
+
                                 logger.error("Value Not Found in table \n"
                                         + e.getLocalizedMessage());
-                                
+
                                 e.printStackTrace();
-                                
+
                             }
                         }
 
@@ -806,7 +814,7 @@ public class MetaDataReader {
                                 .equalsIgnoreCase("ElementShouldNotExist")) {
 
                             finalResult = finalResult && flag;
-                            
+
                             logger.info("Element was expected to be deleted but found available on the page, hence verification failed.");
 
                         }
@@ -814,9 +822,9 @@ public class MetaDataReader {
                     } catch (RaAutoElementNotFound e) {
 
                         if (operation.equalsIgnoreCase("ElementShouldNotExist")) {
-                            
+
                             logger.info("Element is not present on the page, hence verification passed.");
-                            
+
                             flag = true;
 
                         } else {
@@ -846,7 +854,7 @@ public class MetaDataReader {
 
             }
         } else {
-            
+
             logger.info("Nothing to verify");
 
         }
@@ -855,7 +863,7 @@ public class MetaDataReader {
 
             System.out.println("Failed operation : \"" + context.getAction()
                     + "\"");
-            
+
             System.out.println("Expected : \"" + expected.toString()
                     + "\" And Actual was : \"" + actual.toString() + "\"");
 
@@ -889,28 +897,28 @@ public class MetaDataReader {
         // 2. Handle the corrective steps part
 
         if (correctiveSteps != null && correctiveSteps.size() > 0) {
-            
+
             Iterator<CorrectiveStep> correctiveStepIterator = correctiveSteps
                     .iterator();
-            
+
             CorrectiveStep correctiveStep;
-            
+
             String stepToPerform, operation, findBy, findByVal;
-            
+
             WebElement currentElement;
 
             while (correctiveStepIterator.hasNext()) {
-            
+
                 correctiveStep = correctiveStepIterator.next();
-                
+
                 stepToPerform = correctiveStep.getName();
 
                 operation = correctiveStep.getApplicableWhen().getContext()
                         .getAction();
-                
+
                 findBy = correctiveStep.getApplicableWhen().getContext()
                         .getType();
-                
+
                 findByVal = correctiveStep.getApplicableWhen().getContext()
                         .getValue();
 
@@ -921,30 +929,30 @@ public class MetaDataReader {
                             findBy, findByVal);
 
                     if (operation.equalsIgnoreCase("gettext")) {
-                
+
                         String expectedText = correctiveStep
                                 .getApplicableWhen().getContext().getText();
 
                         // replace if the inputdata found to be a key
                         expectedText = input_container.getMaskedData(
                                 expectedText, logger);
-                        
+
                         String actualText = currentElement.getText();
 
                         // check for the applicability
                         if (actualText.contains(expectedText)) {
-                        
+
                             if (stepToPerform != null
                                     && !stepToPerform.equals("")) {
 
                                 logger.info("Performing correctiveStep : "
                                         + stepToPerform);
-                            
+
                                 executeTest(stepToPerform, driver);
 
                                 break;
                             }
-                            
+
                         }
 
                     }
