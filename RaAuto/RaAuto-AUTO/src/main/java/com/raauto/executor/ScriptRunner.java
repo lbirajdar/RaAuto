@@ -122,7 +122,7 @@ public class ScriptRunner implements ITest {
 
             field.setAccessible(true);
 
-            field.set(bastTestMethod, bastTestMethod.getMethodName() + "." + customTestName);
+            field.set(bastTestMethod, customTestName);
 
         } catch (Exception e) {
 
@@ -130,7 +130,7 @@ public class ScriptRunner implements ITest {
 
         }
 
-        _driver.get("");
+       _driver.get("");
 
     }
 
