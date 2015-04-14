@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.TakesScreenshot;
@@ -61,7 +60,7 @@ public class ActionHandler {
         try {
 
             page.isPageReady(by, locator);
-            
+
         } catch (TimeoutException e) {
 
             throw new RaAutoElementNotFound(by, locator);
@@ -103,11 +102,6 @@ public class ActionHandler {
             currentElement = driver.findElement(By.xpath(locator));
 
         }
-        
-        //Scroll to the required element
-        ((JavascriptExecutor) driver).executeScript(
-                "arguments[0].scrollIntoView();", currentElement);
-
 
         return currentElement;
 
@@ -213,7 +207,7 @@ public class ActionHandler {
         String isSelected = "NO_ERROR";
         try {
 
-            // Try selecting with index
+            // Try selecting with Value
             select.selectByIndex(Integer.parseInt(choice));
 
             System.out.println("Selected by Index");
@@ -245,8 +239,8 @@ public class ActionHandler {
 
         try {
             // Try selecting with Value
-             select.selectByVisibleText(choice);
-            
+            select.selectByVisibleText(choice);
+
             System.out.println("Selected by Visible Text");
 
         } catch (Exception e) {
@@ -328,7 +322,8 @@ public class ActionHandler {
         List<WebElement> tr_collection = ActionHandler.getTableElements(driver,
                 table_element, findByAttribute, findByAttributeValue);
 
-        System.out.println("Searching for the '" + inputData + "' in table.");
+        System.out
+                .println("Searching for the " + inputData + "value in table.");
 
         System.out.println("NUMBER OF ROWS IN THIS TABLE = "
                 + tr_collection.size());
@@ -406,7 +401,7 @@ public class ActionHandler {
      */
     public static void waitTime(int seconds) {
 
-        System.out.println("Waiting for " + seconds + " seconds...");
+        System.out.println("Waitng for " + seconds + " seconds...");
 
         try {
 
@@ -435,7 +430,7 @@ public class ActionHandler {
             String currentWindowHandle, WebElement e) {
 
         System.out.println("Taking element measurements for screenshot");
-
+        
         File imageDir = new File("Screenshots");
 
         if (!imageDir.exists() || !imageDir.isDirectory()) {
@@ -522,7 +517,7 @@ public class ActionHandler {
             int fileCounter = 1;
             while (outputFile.exists()) {
 
-                outputFile = new File(outputFileName + "_" + fileCounter + ".gif");
+                outputFile = new File(outputFileName + fileCounter + ".gif");
 
                 fileCounter++;
 
